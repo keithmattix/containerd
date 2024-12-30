@@ -21,7 +21,7 @@ github.com/Microsoft/go-winio/pkg/fs
 github.com/Microsoft/go-winio/pkg/guid
 github.com/Microsoft/go-winio/pkg/security
 github.com/Microsoft/go-winio/vhd
-# github.com/Microsoft/hcsshim v0.11.7 => github.com/keithmattix/hcsshim v0.0.0-20241230172836-d3e634b70682
+# github.com/Microsoft/hcsshim v0.11.7 => github.com/keithmattix/hcsshim v0.0.0-20241230182028-c82ecb6d7b8d
 ## explicit; go 1.21
 github.com/Microsoft/hcsshim
 github.com/Microsoft/hcsshim/cmd/containerd-shim-runhcs-v1/options
@@ -90,6 +90,9 @@ github.com/containerd/aufs/plugin
 # github.com/containerd/btrfs/v2 v2.0.0
 ## explicit; go 1.19
 github.com/containerd/btrfs/v2
+# github.com/containerd/cgroups v1.1.0
+## explicit; go 1.17
+github.com/containerd/cgroups/stats/v1
 # github.com/containerd/cgroups/v3 v3.0.3
 ## explicit; go 1.18
 github.com/containerd/cgroups/v3
@@ -843,4 +846,4 @@ tags.cncf.io/container-device-interface/pkg/parser
 # tags.cncf.io/container-device-interface/specs-go v0.7.0
 ## explicit; go 1.19
 tags.cncf.io/container-device-interface/specs-go
-# github.com/Microsoft/hcsshim => github.com/keithmattix/hcsshim v0.0.0-20241230172836-d3e634b70682
+# github.com/Microsoft/hcsshim => github.com/keithmattix/hcsshim v0.0.0-20241230182028-c82ecb6d7b8d

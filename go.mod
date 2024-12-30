@@ -2,7 +2,7 @@ module github.com/containerd/containerd
 
 go 1.21
 
-replace github.com/Microsoft/hcsshim => github.com/keithmattix/hcsshim v0.0.0-20241230172836-d3e634b70682
+replace github.com/Microsoft/hcsshim => github.com/keithmattix/hcsshim v0.0.0-20241230182028-c82ecb6d7b8d
 
 require (
 	dario.cat/mergo v1.0.0
@@ -95,6 +95,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cilium/ebpf v0.11.0 // indirect
+	github.com/containerd/cgroups v1.1.0 // indirect
 	github.com/containerd/typeurl v1.0.2 // indirect
 	github.com/containers/ocicrypt v1.1.10 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
