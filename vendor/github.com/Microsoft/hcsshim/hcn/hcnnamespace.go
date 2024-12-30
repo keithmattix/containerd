@@ -4,10 +4,12 @@ package hcn
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"syscall"
 
 	"github.com/Microsoft/go-winio/pkg/guid"
+	"github.com/Microsoft/hcsshim"
 	icni "github.com/Microsoft/hcsshim/internal/cni"
 	"github.com/Microsoft/hcsshim/internal/interop"
 	"github.com/Microsoft/hcsshim/internal/regstate"
@@ -62,6 +64,7 @@ type HostComputeNamespace struct {
 	Type          NamespaceType       `json:",omitempty"` // Host, HostDefault, Guest, GuestDefault
 	Resources     []NamespaceResource `json:",omitempty"`
 	SchemaVersion SchemaVersion       `json:",omitempty"`
+	ReadyOnCreate bool                `json:",omitempty"`
 }
 
 // ModifyNamespaceSettingRequest is the structure used to send request to modify a namespace.
@@ -308,9 +311,21 @@ func GetNamespaceContainerIds(namespaceID string) ([]string, error) {
 
 // NewNamespace creates a new Namespace object
 func NewNamespace(nsType NamespaceType) *HostComputeNamespace {
+	// HNS versions >= 15.2 change how network compartments are
+	// initialized for pods and depends on ReadyOnCreate flag in
+	// HCN namespace. It primarily supports removal of pause containers
+	// for process isolation.
+	isReadyOnCreate := false
+	hnsGlobals, err := hcsshim.GetHNSGlobals()
+	if err == nil {
+		isReadyOnCreate = (hnsGlobals.Version.Major > 15) ||
+			(hnsGlobals.Version.Major == 15 && hnsGlobals.Version.Minor >= 2)
+	}
+
 	return &HostComputeNamespace{
 		Type:          nsType,
 		SchemaVersion: V2SchemaVersion(),
+		ReadyOnCreate: isReadyOnCreate,
 	}
 }
 
@@ -378,7 +393,8 @@ func (namespace *HostComputeNamespace) Sync() error {
 	shimPath := runhcs.VMPipePath(cfg.HostUniqueID)
 	if err := runhcs.IssueVMRequest(shimPath, &req); err != nil {
 		// The shim is likely gone. Simply ignore the sync as if it didn't exist.
-		if perr, ok := err.(*os.PathError); ok && perr.Err == syscall.ERROR_FILE_NOT_FOUND {
+		var perr *os.PathError
+		if errors.As(err, &perr) && errors.Is(perr.Err, syscall.ERROR_FILE_NOT_FOUND) {
 			// Remove the reg key there is no point to try again
 			_ = cfg.Remove()
 			return nil
